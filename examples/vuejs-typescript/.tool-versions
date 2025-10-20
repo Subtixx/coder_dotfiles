@@ -1,7 +1,0 @@
-# Example .tool-versions for Vue.js/TypeScript Projects
-
-# Node.js LTS for Vue 3+
-nodejs 20.10.0
-
-# Yarn for package management
-yarn 1.22.19
