@@ -1,0 +1,25 @@
+# Dotfiles repository .gitignore
+
+# Backup files created by installation scripts
+*.backup
+
+# Local machine-specific configurations
+.zshrc.local
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test artifacts
+test/
+tmp/
+
+# OS files
+Thumbs.db

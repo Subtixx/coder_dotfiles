@@ -1,0 +1,167 @@
+[user]
+	# Set your name and email
+	# name = Your Name
+	# email = your.email@example.com
+
+[core]
+	# Use vim as default editor
+	editor = nvim
+	# Enable automatic line ending conversion
+	autocrlf = input
+	# Treat spaces before tabs and trailing whitespace as an error
+	whitespace = space-before-tab,-indent-with-non-tab,trailing-space
+	# Use custom global .gitignore
+	excludesfile = ~/.gitignore_global
+	# Better diff algorithm
+	algorithm = histogram
+
+[init]
+	# Default branch name for new repositories
+	defaultBranch = main
+
+[color]
+	# Enable colors in git output
+	ui = auto
+	branch = auto
+	diff = auto
+	status = auto
+
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+
+[color "status"]
+	added = green
+	changed = yellow
+	untracked = cyan
+
+[alias]
+	# Short status
+	st = status -sb
+	
+	# Pretty log
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	
+	# Show last commit
+	last = log -1 HEAD --stat
+	
+	# Show modified files in last commit
+	dl = "!git ll -1"
+	
+	# Show diff with last commit
+	dlc = diff --cached HEAD^
+	
+	# Find branches containing commit
+	fb = "!f() { git branch -a --contains $1; }; f"
+	
+	# Find tags containing commit
+	ft = "!f() { git describe --always --contains $1; }; f"
+	
+	# Find commits by commit message
+	fm = "!f() { git log --pretty=format:'%C(yellow)%h  %Cblue%ad  %Creset%s%Cgreen  [%cn] %Cred%d' --decorate --date=short --grep=$1; }; f"
+	
+	# List aliases
+	la = "!git config -l | grep alias | cut -c 7-"
+	
+	# Amend last commit
+	amend = commit --amend --reuse-message=HEAD
+	
+	# Undo last commit but keep changes
+	undo = reset --soft HEAD~1
+	
+	# Discard changes in working directory
+	discard = checkout --
+	
+	# List contributors
+	contributors = shortlog --summary --numbered
+	
+	# Show ignored files
+	ignored = ls-files -o -i --exclude-standard
+	
+	# Stash with untracked files
+	stash-all = stash save --include-untracked
+	
+	# Unstage files
+	unstage = reset HEAD --
+	
+	# Show branches sorted by last modified
+	branches = branch -vv --sort=-committerdate
+	
+	# Clean up merged branches
+	cleanup = "!git branch --merged | grep -v '\\*\\|master\\|main\\|develop' | xargs -n 1 git branch -d"
+
+[push]
+	# Push current branch to upstream
+	default = current
+	# Push tags automatically
+	followTags = true
+
+[pull]
+	# Use rebase instead of merge when pulling
+	rebase = true
+
+[fetch]
+	# Automatically prune deleted remote branches
+	prune = true
+
+[rebase]
+	# Automatically stash changes before rebasing
+	autoStash = true
+
+[merge]
+	# Include summaries of merged commits in merge commit messages
+	log = true
+	# Use diff3 conflict style
+	conflictstyle = diff3
+
+[diff]
+	# Use better diff algorithm
+	algorithm = patience
+	# Show prefix for all files
+	mnemonicPrefix = true
+	# Show renames
+	renames = copies
+	# Use color moved to detect moved lines
+	colorMoved = default
+
+[help]
+	# Correct typos automatically
+	autocorrect = 1
+
+[commit]
+	# Show diff when writing commit message
+	verbose = true
+
+[status]
+	# Show submodule summary
+	submoduleSummary = true
+
+[transfer]
+	# Check transferred objects
+	fsckobjects = true
+
+[credential]
+	# Cache credentials for 1 hour
+	helper = cache --timeout=3600
+
+[filter "lfs"]
+	# Git LFS configuration
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+# PHP-specific ignore patterns
+[core "php"]
+	excludesfile = ~/.gitignore_php
+
+# Node.js-specific ignore patterns
+[core "node"]
+	excludesfile = ~/.gitignore_node
