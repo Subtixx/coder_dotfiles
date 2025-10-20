@@ -1,0 +1,169 @@
+# Global gitignore file
+
+# ===========================
+# Operating System Files
+# ===========================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ===========================
+# IDEs and Editors
+# ===========================
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# PHPStorm
+.phpstorm.meta.php
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+.vim/
+Session.vim
+
+# Emacs
+*~
+\#*\#
+.\#*
+.emacs.desktop
+.emacs.desktop.lock
+
+# ===========================
+# Development
+# ===========================
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.node_repl_history
+.yarn-integrity
+.env.local
+.env.*.local
+
+# PHP
+vendor/
+composer.phar
+composer.lock
+.phpunit.result.cache
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+pip-log.txt
+
+# Ruby
+*.gem
+*.rbc
+.bundle/
+.config
+.yardoc
+InstalledFiles
+_yardoc/
+coverage/
+doc/
+lib/bundler/man/
+pkg/
+rdoc/
+spec/reports/
+test/tmp/
+test/version_tmp/
+tmp/
+
+# Rust
+target/
+Cargo.lock
+
+# ===========================
+# Build outputs
+# ===========================
+
+dist/
+build/
+*.log
+logs/
+*.tmp
+.cache/
+.temp/
+
+# ===========================
+# Environment and Secrets
+# ===========================
+
+.env
+.env.local
+.env.*.local
+.envrc
+*.key
+*.pem
+*.crt
+*.csr
+secrets/
+.secrets/
+
+# ===========================
+# Backup files
+# ===========================
+
+*.bak
+*.backup
+*.orig
+*~
+
+# ===========================
+# System files
+# ===========================
+
+*.pid
+*.seed
+*.pid.lock
+.lock-wscript

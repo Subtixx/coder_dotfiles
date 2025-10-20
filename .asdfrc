@@ -1,0 +1,20 @@
+# asdf configuration file
+# This file contains settings for the asdf version manager
+
+# Enable legacy version files
+# This allows asdf to read version files from other version managers
+# Examples: .nvmrc, .ruby-version, .python-version
+legacy_version_file = yes
+
+# Use release candidate versions
+use_release_candidates = no
+
+# Always keep downloaded source code
+always_keep_download = yes
+
+# Disable user-level security checks
+disable_plugin_short_name_repository = no
+
+# Concurrency settings for parallel downloads
+# Adjust based on your network and system capabilities
+concurrency = 4

@@ -1,0 +1,30 @@
+# direnv configuration file
+# Place this file in your project root as .envrc
+
+# Example: Load .env file
+# dotenv
+
+# Example: Add local bin to PATH
+# PATH_add bin
+
+# Example: Set environment variables
+# export DB_HOST=localhost
+# export DB_PORT=5432
+# export DB_NAME=myapp
+# export DB_USER=myuser
+
+# Example: Load a specific version with asdf
+# use asdf
+
+# Example: Load Node.js version
+# use nodejs 20.10.0
+
+# Example: Set up virtual environment for Python
+# layout python python3
+
+# Example: Add project-specific environment variables
+# export PROJECT_ROOT=$(pwd)
+# export PATH=$PROJECT_ROOT/bin:$PATH
+
+# After creating this file, run:
+# direnv allow .
