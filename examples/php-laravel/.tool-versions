@@ -1,0 +1,13 @@
+# Example .tool-versions for PHP/Laravel Projects
+
+# PHP version for Laravel 10+
+php 8.3.0
+
+# Node.js for asset compilation (Vite, Laravel Mix)
+nodejs 20.10.0
+
+# Composer for dependency management
+composer 2.6.5
+
+# Optional: Yarn for frontend dependencies
+yarn 1.22.19

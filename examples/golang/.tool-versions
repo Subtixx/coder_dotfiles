@@ -1,0 +1,4 @@
+# Example .tool-versions for Golang Projects
+
+# Go version
+golang 1.21.5
