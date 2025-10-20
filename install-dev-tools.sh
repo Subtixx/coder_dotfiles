@@ -32,13 +32,34 @@ log_section() {
     echo -e "${BLUE}========================================${NC}"
 }
 
+# New helper: return latest stable semantic version (X.Y.Z) for an asdf plugin.
+# Optionally pass a regex as second arg to further constrain (e.g., "^8\." for PHP 8.x).
+get_latest_stable() {
+    local plugin="$1"
+    local extra_regex="$2"
+    local list
+    list=$(asdf list-all "$plugin" 2>/dev/null || true)
+    if [[ -z "$list" ]]; then
+        echo ""
+        return
+    fi
+
+    if [[ -n "$extra_regex" ]]; then
+        # First apply extra constraint, then pick strict semver lines
+        echo "$list" | grep -E "$extra_regex" | grep -E "^[0-9]+\.[0-9]+\.[0-9]+$" | tail -1 || true
+    else
+        # Pick strict semver lines only (no pre-release tags)
+        echo "$list" | grep -E "^[0-9]+\.[0-9]+\.[0-9]+$" | tail -1 || true
+    fi
+}
+
 # Check if asdf is installed
 check_asdf() {
     if [[ ! -d "$HOME/.asdf" ]]; then
         log_error "asdf is not installed. Please run install.sh first."
         exit 1
     fi
-    
+
     # Source asdf
     . "$HOME/.asdf/asdf.sh"
 }
@@ -46,7 +67,7 @@ check_asdf() {
 # Install PHP
 install_php() {
     log_section "Installing PHP"
-    
+
     # Install PHP dependencies (Ubuntu/Debian)
     if command -v apt-get >/dev/null 2>&1; then
         log_info "Installing PHP build dependencies..."
@@ -75,7 +96,7 @@ install_php() {
             re2c \
             zlib1g-dev
     fi
-    
+
     # Install PHP dependencies (Arch)
     if command -v pacman >/dev/null 2>&1; then
         log_info "Installing PHP build dependencies..."
@@ -99,13 +120,19 @@ install_php() {
             sqlite \
             zlib
     fi
-    
-    # Install latest PHP version
-    local php_version=$(asdf list-all php | grep -E "^8\.[0-9]+\.[0-9]+$" | tail -1)
+
+    # Install latest PHP 8.x stable version
+    local php_version
+    php_version=$(get_latest_stable php "^8\.[0-9]+\.[0-9]+$")
+    if [[ -z "$php_version" ]]; then
+        log_error "Could not determine a stable PHP 8.x version to install."
+        exit 1
+    fi
+
     log_info "Installing PHP $php_version..."
     asdf install php "$php_version"
     asdf global php "$php_version"
-    
+
     log_info "PHP $php_version installed successfully"
     php -v
 }
@@ -113,40 +140,52 @@ install_php() {
 # Install Composer
 install_composer() {
     log_section "Installing Composer"
-    
-    # Install latest Composer version
-    local composer_version=$(asdf list-all composer | grep -E "^[0-9]+\.[0-9]+\.[0-9]+$" | tail -1)
+
+    # Install latest Composer stable version
+    local composer_version
+    composer_version=$(get_latest_stable composer)
+    if [[ -z "$composer_version" ]]; then
+        log_error "Could not determine a stable Composer version to install."
+        exit 1
+    fi
+
     log_info "Installing Composer $composer_version..."
     asdf install composer "$composer_version"
     asdf global composer "$composer_version"
-    
+
     log_info "Composer $composer_version installed successfully"
     composer --version
-    
+
     # Install global Composer packages
     log_info "Installing global Composer packages..."
     composer global require laravel/installer
     composer global require phpunit/phpunit
     composer global require friendsofphp/php-cs-fixer
     composer global require squizlabs/php_codesniffer
-    
+
     log_info "Global Composer packages installed"
 }
 
 # Install Node.js
 install_nodejs() {
     log_section "Installing Node.js"
-    
-    # Install latest LTS Node.js version
-    local node_version=$(asdf list-all nodejs | grep -E "^[0-9]+\.[0-9]+\.[0-9]+$" | grep -v "rc" | tail -1)
+
+    # Install latest stable Node.js version (strict semver to avoid rc/beta)
+    local node_version
+    node_version=$(get_latest_stable nodejs)
+    if [[ -z "$node_version" ]]; then
+        log_error "Could not determine a stable Node.js version to install."
+        exit 1
+    fi
+
     log_info "Installing Node.js $node_version..."
     asdf install nodejs "$node_version"
     asdf global nodejs "$node_version"
-    
+
     log_info "Node.js $node_version installed successfully"
     node -v
     npm -v
-    
+
     # Install global npm packages
     log_info "Installing global npm packages..."
     npm install -g \
@@ -164,20 +203,26 @@ install_nodejs() {
         pm2 \
         http-server \
         serve
-    
+
     log_info "Global npm packages installed"
 }
 
 # Install Yarn
 install_yarn() {
     log_section "Installing Yarn"
-    
-    # Install latest Yarn version
-    local yarn_version=$(asdf list-all yarn | grep -E "^[0-9]+\.[0-9]+\.[0-9]+$" | tail -1)
+
+    # Install latest Yarn stable version
+    local yarn_version
+    yarn_version=$(get_latest_stable yarn)
+    if [[ -z "$yarn_version" ]]; then
+        log_error "Could not determine a stable Yarn version to install."
+        exit 1
+    fi
+
     log_info "Installing Yarn $yarn_version..."
     asdf install yarn "$yarn_version"
     asdf global yarn "$yarn_version"
-    
+
     log_info "Yarn $yarn_version installed successfully"
     yarn --version
 }
@@ -185,16 +230,22 @@ install_yarn() {
 # Install Golang
 install_golang() {
     log_section "Installing Golang"
-    
-    # Install latest Go version
-    local go_version=$(asdf list-all golang | grep -E "^[0-9]+\.[0-9]+\.[0-9]+$" | tail -1)
+
+    # Install latest Go stable version
+    local go_version
+    go_version=$(get_latest_stable golang)
+    if [[ -z "$go_version" ]]; then
+        log_error "Could not determine a stable Golang version to install."
+        exit 1
+    fi
+
     log_info "Installing Golang $go_version..."
     asdf install golang "$go_version"
     asdf global golang "$go_version"
-    
+
     log_info "Golang $go_version installed successfully"
     go version
-    
+
     # Install useful Go tools
     log_info "Installing Go development tools..."
     go install golang.org/x/tools/gopls@latest
@@ -202,14 +253,14 @@ install_golang() {
     go install golang.org/x/tools/cmd/goimports@latest
     go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
     go install github.com/cosmtrek/air@latest
-    
+
     log_info "Go development tools installed"
 }
 
 # Install additional tools
 install_additional_tools() {
     log_section "Installing Additional Development Tools"
-    
+
     # Install Docker Compose (if Docker is available)
     if command -v docker >/dev/null 2>&1; then
         log_info "Docker detected, installing docker-compose..."
@@ -219,10 +270,10 @@ install_additional_tools() {
             sudo pacman -S --noconfirm docker-compose
         fi
     fi
-    
+
     # Install additional CLI tools based on OS
     log_info "Installing additional CLI tools..."
-    
+
     if command -v apt-get >/dev/null 2>&1; then
         sudo apt-get install -y \
             silversearcher-ag \
@@ -236,24 +287,24 @@ install_additional_tools() {
             direnv \
             tldr
     fi
-    
+
     log_info "Additional tools installed"
 }
 
 # Show installed versions
 show_versions() {
     log_section "Installed Versions Summary"
-    
+
     echo "PHP: $(php -v 2>/dev/null | head -n 1 || echo 'Not installed')"
     echo "Composer: $(composer --version 2>/dev/null || echo 'Not installed')"
     echo "Node.js: $(node -v 2>/dev/null || echo 'Not installed')"
     echo "npm: $(npm -v 2>/dev/null || echo 'Not installed')"
     echo "Yarn: $(yarn --version 2>/dev/null || echo 'Not installed')"
     echo "Go: $(go version 2>/dev/null || echo 'Not installed')"
-    
+
     log_section "asdf Plugins"
     asdf plugin list
-    
+
     log_section "asdf Global Versions"
     asdf current
 }
@@ -262,9 +313,9 @@ show_versions() {
 main() {
     log_info "Starting development tools installation..."
     log_info "================================================"
-    
+
     check_asdf
-    
+
     # Ask user what to install
     echo ""
     echo "What would you like to install?"
@@ -275,7 +326,7 @@ main() {
     echo "5) Custom selection"
     echo ""
     read -p "Enter your choice (1-5): " choice
-    
+
     case $choice in
         1)
             install_php
@@ -299,19 +350,19 @@ main() {
         5)
             read -p "Install PHP? (y/n): " install_php_choice
             [[ "$install_php_choice" == "y" ]] && install_php
-            
+
             read -p "Install Composer? (y/n): " install_composer_choice
             [[ "$install_composer_choice" == "y" ]] && install_composer
-            
+
             read -p "Install Node.js? (y/n): " install_node_choice
             [[ "$install_node_choice" == "y" ]] && install_nodejs
-            
+
             read -p "Install Yarn? (y/n): " install_yarn_choice
             [[ "$install_yarn_choice" == "y" ]] && install_yarn
-            
+
             read -p "Install Golang? (y/n): " install_go_choice
             [[ "$install_go_choice" == "y" ]] && install_golang
-            
+
             read -p "Install additional tools? (y/n): " install_tools_choice
             [[ "$install_tools_choice" == "y" ]] && install_additional_tools
             ;;
@@ -320,9 +371,9 @@ main() {
             exit 1
             ;;
     esac
-    
+
     show_versions
-    
+
     log_info "================================================"
     log_info "Development tools installation complete! 🎉"
     log_info ""
