@@ -7,68 +7,18 @@ if ! declare -f log_info >/dev/null 2>&1; then
     exit 1
 fi
 
-asdf_clear_old() {
-    # Safely remove top-level entries under ASDF_DATA_DIR except a few keepers.
-    # Use a loop to handle filenames with spaces and use rm -rf to accept all prompts.
-    local dir="${ASDF_DATA_DIR:-$HOME/.asdf}"
-
-    # If the directory doesn't exist, nothing to do.
-    if [[ ! -d "$dir" ]]; then
-        return 0
-    fi
-
-    # Iterate over immediate children only.
-    shopt -s nullglob dotglob
-    local entry
-    for entry in "$dir"/*; do
-        # Skip if entry doesn't exist (in case of empty dir)
-        [[ -e "$entry" ]] || continue
-
-        case "$(basename "$entry")" in
-            downloads|plugins|installs|shims|bin)
-                # keep these
-                ;;
-            *)
-                # Try to remove the entry. If removal fails (for example due to
-                # permissions), do not abort the whole script — log a helpful
-                # warning with the file owner and mode so the user can take
-                # corrective action (chown or sudo). This avoids the script
-                # exiting under 'set -e' when encountering 'Permission denied'.
-                rm -rf -- "$entry" || {
-                    # Gather ownership/mode info for remediation guidance.
-                    if ls -ld -- "$entry" >/dev/null 2>&1; then
-                        local perms owner group
-                        perms=$(stat -c '%A' -- "$entry" 2>/dev/null || true)
-                        owner=$(stat -c '%U' -- "$entry" 2>/dev/null || true)
-                        group=$(stat -c '%G' -- "$entry" 2>/dev/null || true)
-                        log_warn "Could not remove '$entry' due to permission issues."
-                        log_warn "Owner: ${owner:-unknown}, Group: ${group:-unknown}, Mode: ${perms:-unknown}."
-                    else
-                        log_warn "Could not remove '$entry' and file no longer exists or is inaccessible."
-                    fi
-                    log_warn "To fix: run 'sudo rm -rf \"$entry\"' or change ownership: 'sudo chown -R \$USER:\$USER \"$entry\"' then retry."
-                }
-                ;;
-        esac
-    done
-    shopt -u nullglob dotglob
-}
-
 # Install asdf
 asdf_install() {
     log_info "Installing asdf version manager..."
 
     if [[ -d "$HOME/.asdf" ]]; then
-        log_warn "asdf already installed, updating..."
-        # Use common helper to safely update the asdf repo
-        git_safe_update_repo "$HOME/.asdf" "origin"
-    else
-        run_and_log git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.18.0
+        log_warn "asdf already installed. Skipping installation."
+        return
     fi
+    run_and_log git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.18.0
+
     export ASDF_DATA_DIR="$HOME/.asdf"
     export PATH="$ASDF_DATA_DIR/shims:$PATH:$ASDF_DATA_DIR/bin"
-
-    asdf_clear_old
 
     log_info "asdf installed successfully"
     asdf version
