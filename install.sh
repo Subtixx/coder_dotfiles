@@ -160,7 +160,7 @@ main() {
     log_info "Starting dotfiles installation..."
     log_info "================================================"
 
-    common_detect_os
+    detect_os
     source_os_script
     start_package_install
     install_packages
