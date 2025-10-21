@@ -7,6 +7,36 @@ if ! declare -f log_info >/dev/null 2>&1; then
     exit 1
 fi
 
+asdf_clear_old() {
+    # Safely remove top-level entries under ASDF_DATA_DIR except a few keepers.
+    # Use a loop to handle filenames with spaces and use rm -rf to accept all prompts.
+    local dir="${ASDF_DATA_DIR:-$HOME/.asdf}"
+
+    # If the directory doesn't exist, nothing to do.
+    if [[ ! -d "$dir" ]]; then
+        return 0
+    fi
+
+    # Iterate over immediate children only.
+    shopt -s nullglob dotglob
+    local entry
+    for entry in "$dir"/*; do
+        # Skip if entry doesn't exist (in case of empty dir)
+        [[ -e "$entry" ]] || continue
+
+        case "$(basename "$entry")" in
+            downloads|plugins|installs|shims)
+                # keep these
+                ;;
+            *)
+                # Use rm -rf to force removal (accept all)
+                rm -rf -- "$entry"
+                ;;
+        esac
+    done
+    shopt -u nullglob dotglob
+}
+
 # Install asdf
 asdf_install() {
     log_info "Installing asdf version manager..."
@@ -21,11 +51,11 @@ asdf_install() {
     export ASDF_DATA_DIR="$HOME/.asdf"
     export PATH="$ASDF_DATA_DIR/shims:$PATH:$ASDF_DATA_DIR/bin"
 
+    asdf_clear_old
+
     log_info "asdf installed successfully"
     asdf version
     asdf reshim
-
-    find ${ASDF_DATA_DIR:-$HOME/.asdf}/ -maxdepth 1 -mindepth 1 -not -name downloads -not -name plugins -not -name installs -not -name shims -exec rm -r {} \;
 
     asdf_install_plugins
 }
