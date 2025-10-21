@@ -8,7 +8,7 @@ export PATH="$HOME/bin:$PATH"
 
 # asdf
 export ASDF_DATA_DIR="$HOME/.asdf"
-export PATH="$ASDF_DATA_DIR/shims:$PATH"
+export PATH="$ASDF_DATA_DIR/shims:$PATH:$ASDF_DATA_DIR/bin"
 
 # Go
 export GOPATH="$HOME/go"
