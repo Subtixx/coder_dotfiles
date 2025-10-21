@@ -19,9 +19,9 @@ install_nerd_font() {
 
     local font_url="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$font.zip"
     log_info "Downloading $font..."
-    curl -L -o "$font_dir/$font.zip" "$font_url"
+    run_and_log curl -L -o "$font_dir/$font.zip" "$font_url"
     log_info "Extracting $font..."
-    unzip -o "$font_dir/$font.zip" -d "$font_dir/"
+    run_and_log unzip -o "$font_dir/$font.zip" -d "$font_dir/"
     rm "$font_dir/$font.zip"
 }
 
@@ -39,9 +39,9 @@ install_nerd_fonts() {
     for font in "${fonts[@]}"; do
         local url="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$font.zip"
         log_info "Downloading $font..."
-        curl -L -o "$font_dir/$font.zip" "$url"
+        run_and_log curl -L -o "$font_dir/$font.zip" "$url"
         log_info "Extracting $font..."
-        unzip -o "$font_dir/$font.zip" -d "$font_dir/"
+        run_and_log unzip -o "$font_dir/$font.zip" -d "$font_dir/"
         rm "$font_dir/$font.zip"
     done
 

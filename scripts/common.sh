@@ -127,12 +127,38 @@ show_versions() {
 	fi
 }
 
+
+
+# Run a command (with sudo if available), capture stdout+stderr and send it to log_debug.
+# Returns the command's exit code. This keeps commands quiet unless IS_DEBUG=true.
+run_and_log() {
+	local tmp rc
+	tmp="$(mktemp)"
+	if command -v sudo >/dev/null 2>&1; then
+		# Use sudo when available
+		if sudo "$@" >"$tmp" 2>&1; then
+			rc=0
+		else
+			rc=$?
+		fi
+	else
+		if "$@" >"$tmp" 2>&1; then
+			rc=0
+		else
+			rc=$?
+		fi
+	fi
+	if [[ -s "$tmp" ]]; then
+		# send the captured output to debug log (which itself is conditional on IS_DEBUG)
+		log_debug "$(cat "$tmp")"
+	fi
+	rm -f "$tmp"
+	return $rc
+}
+
 run_with_sudo() {
-    if command -v sudo >/dev/null 2>&1; then
-        sudo "$@"
-    else
-        "$@"
-    fi
+	# Delegate to run_and_log so all sudo'd commands are captured to debug logs
+	run_and_log "$@"
 }
 
 # Source the OS-specific script once

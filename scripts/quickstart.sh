@@ -29,31 +29,31 @@ log_section() {
 
 main() {
     log_section "Coder Dotfiles Quick Start"
-    
+
     # Check if git is installed
     if ! command -v git >/dev/null 2>&1; then
         log_error "Git is not installed. Please install git first."
         exit 1
     fi
-    
+
     # Clone repository
     DOTFILES_DIR="$HOME/coder_dotfiles"
-    
+
     if [ -d "$DOTFILES_DIR" ]; then
         log_info "Dotfiles directory already exists. Updating..."
         cd "$DOTFILES_DIR"
-        git pull
+        run_and_log git pull
     else
         log_info "Cloning dotfiles repository..."
-        git clone https://github.com/Subtixx/coder_dotfiles.git "$DOTFILES_DIR"
+        run_and_log git clone https://github.com/Subtixx/coder_dotfiles.git "$DOTFILES_DIR"
         cd "$DOTFILES_DIR"
     fi
-    
+
     # Run installation
     log_info "Running installation script..."
     chmod +x install.sh
     ./install.sh
-    
+
     log_section "Installation Complete!"
     log_info "To install development tools, run:"
     log_info "  cd $DOTFILES_DIR && ./install-dev-tools.sh"

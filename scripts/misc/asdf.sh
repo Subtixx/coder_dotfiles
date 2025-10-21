@@ -14,10 +14,10 @@ asdf_install() {
     if [[ -d "$HOME/.asdf" ]]; then
         log_warn "asdf already installed, updating..."
         cd "$HOME/.asdf"
-        git pull
+        run_and_log git pull
         cd -
     else
-        git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.18.0
+        run_and_log git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.18.0
     fi
 
     # Source asdf to use it immediately

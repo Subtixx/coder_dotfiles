@@ -21,7 +21,7 @@ tmux_install() {
         return
     fi
 
-    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    run_and_log git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
     log_info "TPM installed successfully"
 }
