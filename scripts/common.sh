@@ -267,3 +267,68 @@ install_system_packages() {
 	os_install_system_packages
 	log_info "System packages installed successfully"
 }
+
+# Safely update a git repository directory.
+# Usage: git_safe_update_repo <repo_dir> [preferred_remote]
+# Behavior:
+# - fetches all remotes
+# - if on a branch: does a fast-forward pull
+# - if in detached HEAD: attempts to determine the remote default branch
+#   (prefers 'origin', falls back to first remote, then 'main'/'master')
+#   and checks out/reset a local branch to match the remote before pulling.
+# - logs warnings and skips the pull when no safe default can be determined.
+git_safe_update_repo() {
+	local repo_dir="$1"
+	local preferred_remote="${2:-origin}"
+	if [[ -z "$repo_dir" ]]; then
+		log_error "git_safe_update_repo: repo_dir is required"
+		return 1
+	fi
+	if [[ ! -d "$repo_dir/.git" ]]; then
+		log_warn "git_safe_update_repo: not a git repository: $repo_dir"
+		return 1
+	fi
+
+	pushd "$repo_dir" >/dev/null || return 1
+	# Ensure we have up-to-date refs
+	run_and_log git fetch --all --prune
+
+	local current_branch remote remote_default
+	current_branch=$(git symbolic-ref -q --short HEAD 2>/dev/null || true)
+	if [[ -z "$current_branch" ]]; then
+		# Detached HEAD — try to determine remote and its default branch
+		remote="$preferred_remote"
+		if ! git remote | grep -q "^$remote$"; then
+			remote=$(git remote | head -n1 || true)
+		fi
+
+		if [[ -n "$remote" ]]; then
+			remote_default=$(git remote show "$remote" 2>/dev/null | sed -n 's/.*HEAD branch: //p' || true)
+			if [[ -z "$remote_default" ]]; then
+				# Fallback to common branch names if remote doesn't advertise HEAD
+				if git ls-remote --heads "$remote" main | grep -q refs/heads/main; then
+					remote_default="main"
+				elif git ls-remote --heads "$remote" master | grep -q refs/heads/master; then
+					remote_default="master"
+				else
+					remote_default=""
+				fi
+			fi
+
+			if [[ -n "$remote_default" ]]; then
+				log_info "Detached HEAD detected in $repo_dir — switching to '$remote_default' from '$remote' and updating"
+				run_and_log git checkout -B "$remote_default" "$remote/$remote_default"
+				run_and_log git pull "$remote" "$remote_default"
+			else
+				log_warn "Could not determine remote default branch for '$remote'; skipping git pull in $repo_dir"
+			fi
+		else
+			log_warn "No git remote configured for $repo_dir; skipping update"
+		fi
+	else
+		# On a branch — perform a fast-forward pull
+		run_and_log git pull --ff-only
+	fi
+
+	popd >/dev/null || true
+}

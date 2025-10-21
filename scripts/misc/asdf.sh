@@ -13,9 +13,8 @@ asdf_install() {
 
     if [[ -d "$HOME/.asdf" ]]; then
         log_warn "asdf already installed, updating..."
-        cd "$HOME/.asdf"
-        run_and_log git pull
-        cd -
+        # Use common helper to safely update the asdf repo
+        git_safe_update_repo "$HOME/.asdf" "origin"
     else
         run_and_log git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.18.0
     fi
