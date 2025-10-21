@@ -23,7 +23,7 @@ php_install() {
     install_packages $php_packages
     asdf_ensure_plugin php https://github.com/asdf-community/asdf-php.git
     local php_version
-    php_version=$(get_latest_stable php "^8\.[0-9]+\.[0-9]+$")
+    php_version=$(asdf_get_latest_stable php "^8\.[0-9]+\.[0-9]+$")
     if [[ -z "$php_version" ]]; then
         log_error "Could not determine a stable PHP 8.x version to install."
         exit 1

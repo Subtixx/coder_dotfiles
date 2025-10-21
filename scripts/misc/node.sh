@@ -32,8 +32,6 @@ nodejs_install_global_packages() {
         typescript
         ts-node
         @vue/cli
-        @angular/cli
-        create-react-app
         vite
         eslint
         prettier

@@ -57,6 +57,11 @@ asdf_install_plugins() {
 }
 
 asdf_get_latest_stable() {
+    # Ensure $HOME/bin is in PATH for asdf command
+    if [[ -z "$PATH" || ":$PATH:" != *":$HOME/bin:"* ]]; then
+        export PATH="$HOME/bin:$PATH"
+    fi
+
     local plugin="$1"
     local extra_regex="$2"
     local list
@@ -74,17 +79,19 @@ asdf_get_latest_stable() {
 
 # Check asdf and source
 asdf_check() {
-    if [[ ! -d "$HOME/.asdf" ]]; then
+    if [[ ! -d "$HOME/bin/asdf" ]]; then
         log_error "asdf is not installed. Please run install.sh first."
         exit 1
     fi
-    log_info "Sourcing asdf..."
-    . "$HOME/.asdf/asdf.sh"
-    log_info "asdf sourced successfully"
 }
 
 # Ensure asdf plugins are present
 asdf_ensure_plugin() {
+    # Ensure $HOME/bin is in PATH for asdf command
+    if [[ -z "$PATH" || ":$PATH:" != *":$HOME/bin:"* ]]; then
+        export PATH="$HOME/bin:$PATH"
+    fi
+
     local plugin="$1"
     local repo="$2"
     if ! asdf plugin list | grep -q "$plugin"; then
