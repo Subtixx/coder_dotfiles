@@ -9,7 +9,7 @@ fi
 
 golang_install() {
     log_section "Installing Golang"
-    ensure_asdf_plugin golang https://github.com/asdf-community/asdf-golang.git
+    asdf_ensure_plugin golang https://github.com/asdf-community/asdf-golang.git
     local go_version
     go_version=$(get_latest_stable golang)
     if [[ -z "$go_version" ]]; then

@@ -17,7 +17,7 @@ asdf_install() {
         git pull
         cd -
     else
-        git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0
+        git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.18.0
     fi
 
     # Source asdf to use it immediately

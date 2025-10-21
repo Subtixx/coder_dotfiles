@@ -20,7 +20,7 @@ nodejs_install() {
         nvm install "$node_version"
         nvm alias default "$node_version"
     else
-        ensure_asdf_plugin nodejs https://github.com/asdf-vm/asdf-nodejs.git
+        asdf_ensure_plugin nodejs https://github.com/asdf-vm/asdf-nodejs.git
         local node_version
         node_version=$(get_latest_stable nodejs)
         if [[ -z "$node_version" ]]; then

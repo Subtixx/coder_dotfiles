@@ -21,7 +21,7 @@ php_install() {
     fi
     log_info "Installing PHP build dependencies..."
     install_packages $php_packages
-    ensure_asdf_plugin php https://github.com/asdf-community/asdf-php.git
+    asdf_ensure_plugin php https://github.com/asdf-community/asdf-php.git
     local php_version
     php_version=$(get_latest_stable php "^8\.[0-9]+\.[0-9]+$")
     if [[ -z "$php_version" ]]; then
