@@ -11,14 +11,18 @@ fi
 asdf_install() {
     log_info "Installing asdf version manager..."
 
-    if [[ -d "$HOME/.asdf" ]]; then
-        log_warn "asdf already installed. Skipping installation."
+    if [[ -f "$HOME/bin/asdf" ]]; then
+        log_warn "asdf already installed in \$HOME/bin. Skipping installation."
         return
     fi
-    run_and_log git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.18.0
 
-    export ASDF_DATA_DIR="$HOME/.asdf"
-    export PATH="$ASDF_DATA_DIR/shims:$PATH"
+    log_info "Downloading asdf binary tarball..."
+    run_and_log mkdir -p "$HOME/bin"
+    run_and_log curl -L https://github.com/asdf-vm/asdf/releases/download/v0.18.0/asdf-v0.18.0-linux-amd64.tar.gz -o /tmp/asdf.tar.gz
+    run_and_log tar -xzf /tmp/asdf.tar.gz -C "$HOME/bin" --strip-components=0
+    run_and_log rm /tmp/asdf.tar.gz
+
+    export PATH="$HOME/bin:$PATH"
 
     log_info "asdf installed successfully"
     asdf version
