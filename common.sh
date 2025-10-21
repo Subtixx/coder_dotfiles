@@ -35,6 +35,13 @@ log_message() {
 	printf "[%-7s] [%-19s] %s\n" "$level" "$datetime" "$msg" >> /tmp/startup.log
 }
 
+log_section() {
+    echo ""
+    echo -e "${BLUE}========================================${NC}"
+    echo -e "${BLUE}$1${NC}"
+    echo -e "${BLUE}========================================${NC}"
+}
+
 log_info() {
 	log_message INFO "$1"
 }

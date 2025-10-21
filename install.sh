@@ -29,21 +29,25 @@ install_oh_my_zsh() {
 
     # zsh-autosuggestions
     if [[ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]]; then
+        log_info "Installing zsh-autosuggestions plugin..."
         git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
     fi
 
     # zsh-syntax-highlighting
     if [[ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ]]; then
+        log_info "Installing zsh-syntax-highlighting plugin..."
         git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
     fi
 
     # zsh-completions
     if [[ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-completions" ]]; then
+        log_info "Installing zsh-completions plugin..."
         git clone https://github.com/zsh-users/zsh-completions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions
     fi
 
     # Powerlevel10k theme
     if [[ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k" ]]; then
+        log_info "Installing Powerlevel10k theme..."
         git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel10k
     fi
 
@@ -71,27 +75,20 @@ install_asdf() {
 
     # Node.js
     if ! asdf plugin list | grep -q nodejs; then
+        log_info "Installing asdf plugin for Node.js..."
         asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
     fi
 
     # PHP
     if ! asdf plugin list | grep -q php; then
+        log_info "Installing asdf plugin for PHP..."
         asdf plugin add php https://github.com/asdf-community/asdf-php.git
     fi
 
     # Golang
     if ! asdf plugin list | grep -q golang; then
+        log_info "Installing asdf plugin for Golang..."
         asdf plugin add golang https://github.com/asdf-community/asdf-golang.git
-    fi
-
-    # Composer
-    if ! asdf plugin list | grep -q composer; then
-        asdf plugin add composer https://github.com/asdf-community/asdf-composer.git
-    fi
-
-    # Yarn
-    if ! asdf plugin list | grep -q yarn; then
-        asdf plugin add yarn https://github.com/twuni/asdf-yarn.git
     fi
 
     log_info "asdf installed successfully"
@@ -167,7 +164,9 @@ main() {
     stop_package_install
     install_oh_my_zsh
     install_asdf
+    install_node_tools
     install_tmux_plugins
+    install_composer
     copy_dotfiles
     install_nerd_fonts
     change_shell
