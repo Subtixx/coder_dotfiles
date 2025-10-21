@@ -11,30 +11,6 @@ set -e
 # Source common functions
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$SCRIPT_DIR/common.sh"
-                gcc \
-                g++ \
-                build-essential \
-                openssh-client \
-                gnupg \
-                tree \
-                ncdu \
-                httpie \
-                software-properties-common \
-                apt-transport-https \
-                ca-certificates
-
-            # Create symlinks for Ubuntu/Debian naming differences
-            sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd 2>/dev/null || true
-            sudo ln -sf /usr/bin/batcat /usr/local/bin/bat 2>/dev/null || true
-            ;;
-        *)
-            log_error "Unsupported OS: $OS"
-            exit 1
-            ;;
-    esac
-
-    log_info "System packages installed successfully"
-}
 
 # Install Oh My Zsh
 install_oh_my_zsh() {
