@@ -71,7 +71,7 @@ source_os_script() {
 start_package_install() {
 	PACKAGE_MANAGER_INITIALIZED=true
 	> "$PACKAGE_CACHE_FILE"
-    os_start_package_install()
+	os_start_package_install
 	log_info "Package install session started. Cache: $PACKAGE_CACHE_FILE"
 }
 
@@ -79,7 +79,7 @@ start_package_install() {
 stop_package_install() {
 	PACKAGE_MANAGER_INITIALIZED=false
 	if [[ -f "$PACKAGE_CACHE_FILE" ]]; then
-        os_stop_package_install()
+		os_stop_package_install
 		rm -f "$PACKAGE_CACHE_FILE"
 		log_info "Package install session stopped. Cache deleted."
 	fi
@@ -126,6 +126,6 @@ install_packages() {
 		return 1
 	fi
 	log_info "Installing system packages..."
-	install_packages
+	os_install_packages
 	log_info "System packages installed successfully"
 }
