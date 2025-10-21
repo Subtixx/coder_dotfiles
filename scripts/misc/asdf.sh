@@ -18,7 +18,7 @@ asdf_install() {
     run_and_log git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.18.0
 
     export ASDF_DATA_DIR="$HOME/.asdf"
-    export PATH="$ASDF_DATA_DIR/shims:$PATH:$ASDF_DATA_DIR/bin"
+    export PATH="$ASDF_DATA_DIR/shims:$PATH"
 
     log_info "asdf installed successfully"
     asdf version
