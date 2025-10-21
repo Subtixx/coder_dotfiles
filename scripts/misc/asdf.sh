@@ -29,8 +29,25 @@ asdf_clear_old() {
                 # keep these
                 ;;
             *)
-                # Use rm -rf to force removal (accept all)
-                rm -rf -- "$entry"
+                # Try to remove the entry. If removal fails (for example due to
+                # permissions), do not abort the whole script — log a helpful
+                # warning with the file owner and mode so the user can take
+                # corrective action (chown or sudo). This avoids the script
+                # exiting under 'set -e' when encountering 'Permission denied'.
+                rm -rf -- "$entry" || {
+                    # Gather ownership/mode info for remediation guidance.
+                    if ls -ld -- "$entry" >/dev/null 2>&1; then
+                        local perms owner group
+                        perms=$(stat -c '%A' -- "$entry" 2>/dev/null || true)
+                        owner=$(stat -c '%U' -- "$entry" 2>/dev/null || true)
+                        group=$(stat -c '%G' -- "$entry" 2>/dev/null || true)
+                        log_warn "Could not remove '$entry' due to permission issues."
+                        log_warn "Owner: ${owner:-unknown}, Group: ${group:-unknown}, Mode: ${perms:-unknown}."
+                    else
+                        log_warn "Could not remove '$entry' and file no longer exists or is inaccessible."
+                    fi
+                    log_warn "To fix: run 'sudo rm -rf \"$entry\"' or change ownership: 'sudo chown -R \$USER:\$USER \"$entry\"' then retry."
+                }
                 ;;
         esac
     done
