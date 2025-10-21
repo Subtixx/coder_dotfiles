@@ -22,7 +22,7 @@ nodejs_install() {
     else
         asdf_ensure_plugin nodejs https://github.com/asdf-vm/asdf-nodejs.git
         local node_version
-        node_version=$(get_latest_stable nodejs)
+        node_version=$(asdf_get_latest_stable nodejs)
         if [[ -z "$node_version" ]]; then
             log_error "Could not determine a stable Node.js version to install."
             exit 1

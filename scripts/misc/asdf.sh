@@ -18,11 +18,15 @@ asdf_install() {
     else
         run_and_log git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.18.0
     fi
+    export ASDF_DATA_DIR="$HOME/.asdf"
+    export PATH="$ASDF_DATA_DIR/shims:$PATH"
 
-    # Source asdf to use it immediately
-    . "$HOME/.asdf/asdf.sh"
     log_info "asdf installed successfully"
     asdf version
+    asdf reshim
+
+    find ${ASDF_DATA_DIR:-$HOME/.asdf}/ -maxdepth 1 -mindepth 1 -not -name downloads -not -name plugins -not -name installs -not -name shims -exec rm -r {} \;
+
     asdf_install_plugins
 }
 
