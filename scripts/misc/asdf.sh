@@ -56,35 +56,6 @@ asdf_install_plugins() {
     log_info "asdf plugins installed successfully"
 }
 
-asdf_get_latest_stable() {
-    # Ensure $HOME/bin is in PATH for asdf command
-    if [[ -z "$PATH" || ":$PATH:" != *":$HOME/bin:"* ]]; then
-        export PATH="$HOME/bin:$PATH"
-    fi
-
-    local plugin="$1"
-    local extra_regex="$2"
-    local list
-    list=$(asdf list-all "$plugin" 2>/dev/null || true)
-    if [[ -z "$list" ]]; then
-        echo ""
-        return
-    fi
-    if [[ -n "$extra_regex" ]]; then
-        echo "$list" | grep -E "$extra_regex" | grep -E "^[0-9]+\.[0-9]+\.[0-9]+$" | tail -1 || true
-    else
-        echo "$list" | grep -E "^[0-9]+\.[0-9]+\.[0-9]+$" | tail -1 || true
-    fi
-}
-
-# Check asdf and source
-asdf_check() {
-    if [[ ! -d "$HOME/bin/asdf" ]]; then
-        log_error "asdf is not installed. Please run install.sh first."
-        exit 1
-    fi
-}
-
 # Ensure asdf plugins are present
 asdf_ensure_plugin() {
     # Ensure $HOME/bin is in PATH for asdf command
