@@ -137,7 +137,16 @@ run_with_sudo() {
 
 # Source the OS-specific script once
 source_os_script() {
-	local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+	local script_dir
+
+	local _source="${BASH_SOURCE[0]:-$0}"
+	while [[ -L "$_source" ]]; do
+		local _dir
+		_dir="$(cd -P "$(dirname "$_source")" >/dev/null 2>&1 && pwd)"
+		_source="$(readlink "$_source")"
+		[[ "$_source" != /* ]] && _source="$_dir/$_source"
+	done
+	script_dir="$(cd -P "$(dirname "$_source")" >/dev/null 2>&1 && pwd)"
 
 	if [[ -z "$OS" ]]; then
 		detect_os
@@ -145,13 +154,13 @@ source_os_script() {
 
 	case "$OS" in
 		arch|manjaro)
-			. "$script_dir/arch.sh"
+			. "$script_dir/os/arch.sh"
 			;;
 		ubuntu|debian)
-			. "$script_dir/ubuntu.sh"
+			. "$script_dir/os/ubuntu.sh"
 			;;
 		alpine)
-			. "$script_dir/alpine.sh"
+			. "$script_dir/os/alpine.sh"
 			;;
 		*)
 			log_error "Unsupported OS: $OS"
