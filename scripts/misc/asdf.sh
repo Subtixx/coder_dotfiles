@@ -25,7 +25,7 @@ asdf_clear_old() {
         [[ -e "$entry" ]] || continue
 
         case "$(basename "$entry")" in
-            downloads|plugins|installs|shims)
+            downloads|plugins|installs|shims|bin)
                 # keep these
                 ;;
             *)
